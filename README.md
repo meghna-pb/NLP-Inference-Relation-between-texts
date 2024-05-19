@@ -2,8 +2,7 @@
 Project for the NLP course at Université Paris Dauphine - PSL.
 
 ```bash
-
-python3 -m venv bert-nli-env
-bert-nli-env\Scripts\activate   
-pip install torch transformers datasets
+python -m venv venv
+.\venv\Scripts\Activate
+pip install torch transformers datasets matplotlib
 ```
