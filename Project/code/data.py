@@ -1,7 +1,8 @@
 from datasets import load_dataset
 import numpy as np
 import matplotlib.pyplot as plt
-
+from transformers import DistilBertTokenizer
+from torch.utils.data import DataLoader
 
 def load_data():
     """Load the SNLI dataset and filter out entries with label -1.
@@ -15,6 +16,46 @@ def load_data():
     dataset = dataset.filter(lambda example: example['label'] != -1) # filter out pairs with no label
     return dataset
 
+def tokenize_data(dataset, tokenizer_name='distilbert-base-uncased', max_length=128):
+    """Tokenize the dataset using the specified tokenizer.
+
+    Args:
+        dataset (datasets.DatasetDict): The dataset to tokenize.
+        tokenizer_name (str): The name of the tokenizer to use.
+        max_length (int): The maximum length of the tokenized sequences.
+
+    Returns:
+        tokenized_datasets (datasets.DatasetDict): The tokenized dataset.
+    """
+    tokenizer = DistilBertTokenizer.from_pretrained(tokenizer_name)
+
+    def tokenize_function(examples):
+        return tokenizer(examples['premise'], examples['hypothesis'], padding='max_length', truncation=True, max_length=max_length)
+
+    tokenized_datasets = dataset.map(tokenize_function, batched=True)
+    tokenized_datasets = tokenized_datasets.rename_column("label", "labels")
+    tokenized_datasets.set_format('torch', columns=['input_ids', 'attention_mask', 'labels'])
+
+    return tokenized_datasets
+
+def prepare_dataloaders(tokenized_datasets, batch_size=8):
+    """Prepare dataloaders for the tokenized dataset.
+
+    Args:
+        tokenized_datasets (datasets.DatasetDict): The tokenized dataset.
+        batch_size (int): The batch size for the dataloaders.
+
+    Returns:
+        train_loader (DataLoader): DataLoader for the training set.
+        val_loader (DataLoader): DataLoader for the validation set.
+    """
+    train_dataset = tokenized_datasets['train']
+    val_dataset = tokenized_datasets['validation']
+
+    train_loader = DataLoader(train_dataset, shuffle=True, batch_size=batch_size)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size)
+
+    return train_loader, val_loader
 
 def visualise_data(dataset) -> None:
     """
