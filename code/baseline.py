@@ -39,7 +39,7 @@ vectorizer = CountVectorizer()
 X_train_bow = vectorizer.fit_transform(X_train)
 X_val_bow = vectorizer.transform(X_val)
 
-# Classical models
+# Classic models
 models = {
     'Naive Bayes': MultinomialNB(),
     'Logistic Regression': LogisticRegression(max_iter=1000),
