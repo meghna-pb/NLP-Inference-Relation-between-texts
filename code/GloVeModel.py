@@ -4,8 +4,18 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
 class GloVeModel():
-    
-    def __init__(self, n_dim, learning_rate, vocab, max_epochs, x_max, alpha):
+        
+    def __init__(self, n_dim: int, learning_rate: float, vocab: list, max_epochs: int, x_max: float, alpha: float):
+        """Class designed to train word embeddings using the GloVe (Global Vectors for Word Representation) approach.
+
+        Args:
+            n_dim (int): Dimensionalityof the word vectors.
+            learning_rate (float): The learning rate for optimization.
+            vocab (list): List of vocabulatory words.
+            max_epochs (int): Maximum number of epochs for training.
+            x_max (float): Threshold parameter for the weighting function.
+            alpha (float): Exponent for the weighting function
+        """
         vocab_size = len(vocab)
         self.d = n_dim
         self.eta = learning_rate
@@ -22,6 +32,11 @@ class GloVeModel():
         self.b_tilda = np.random.randn(vocab_size, 1) # bias term
 
     def fit(self, X):
+        """Fits the GloVe model.
+
+        Args:
+            X : Cooccurence matrix.
+        """
         for epoch in range(self.max_epochs):
             print(f'Epoch {epoch+1}/{self.max_epochs}')
             
@@ -59,6 +74,14 @@ class GloVeModel():
                     self.b_tilda[j] -= self.eta * grad_b_tilda
 
     def plot_embeddings(self, n_components=2):
+        """Plot the word embedding reduced to the 'n_components' dimensions usinf the pCA.
+
+        Args:
+            n_components (int, optional): Number of components of the CPA. Defaults to 2.
+
+        Returns:
+            _type_: _description_
+        """
         pca = PCA(n_components=n_components)
         W_proj = pca.fit_transform(self.W)
         
