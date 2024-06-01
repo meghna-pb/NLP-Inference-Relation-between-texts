@@ -1,7 +1,9 @@
 import torch
 import torch.nn as nn
 from data import load_data, visualise_data, tokenize_data, prepare_dataloaders
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification, AdamW
+from torch.optim import AdamW
+from transformers import DistilBertForSequenceClassification
+from tqdm import tqdm
 
 
 # Set the random seed for manual reproductibility
@@ -10,7 +12,7 @@ print(f"Device used: {device}")
 
 # Load data
 data = load_data()
-visualise_data(data)
+# visualise_data(data)
 
 tokenized_datasets = tokenize_data(data)
 train_loader, val_loader = prepare_dataloaders(tokenized_datasets)
@@ -27,7 +29,9 @@ num_epochs = 3
 for epoch in range(num_epochs):
     model.train()
     total_loss = 0
-    for batch in train_loader:
+    
+    progress_bar = tqdm(train_loader, desc=f'Epoch {epoch+1}')
+    for batch in progress_bar:
         batch = {k: v.to(model.device) for k, v in batch.items()}
         outputs = model(**batch)
         
@@ -37,8 +41,12 @@ for epoch in range(num_epochs):
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
+
+        progress_bar.set_postfix(loss=loss.item())
     
+    # Print average loss for the epoch
     print(f"Epoch {epoch+1} | Loss: {total_loss / len(train_loader)}")
+
 
 # Testing the model
 model.eval()
@@ -54,3 +62,5 @@ for batch in val_loader:
     total_eval_accuracy += (predictions == batch['labels']).sum().item()
 
 print(f"Validation Accuracy: {total_eval_accuracy / len(val_loader)}")
+
+# Launch baseline comparison

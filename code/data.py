@@ -38,7 +38,7 @@ def tokenize_data(dataset, tokenizer_name='distilbert-base-uncased', max_length=
 
     return tokenized_datasets
 
-def prepare_dataloaders(tokenized_datasets, batch_size=8):
+def prepare_dataloaders(tokenized_datasets, batch_size=300):
     """Prepare dataloaders for the tokenized dataset.
 
     Args:
