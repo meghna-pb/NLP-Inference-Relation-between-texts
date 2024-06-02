@@ -62,5 +62,3 @@ for batch in val_loader:
     total_eval_accuracy += (predictions == batch['labels']).sum().item()
 
 print(f"Validation Accuracy: {total_eval_accuracy / len(val_loader)}")
-
-# Launch baseline comparison

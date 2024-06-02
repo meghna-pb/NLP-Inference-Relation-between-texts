@@ -10,7 +10,7 @@ from transformers import DistilBertTokenizer
 import torch.nn as nn
 import torch.optim as optim
 from LSTMModel import LSTMModel
-from GloVeModel import GloVeModel  # Import the GloVeModel class
+from GloVeModel import GloVeModel
 
 
 # Load the data

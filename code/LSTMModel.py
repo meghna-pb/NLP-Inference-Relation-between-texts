@@ -17,7 +17,7 @@ class LSTMModel(nn.Module):
         self.n_layers = n_layers
         
         self.embedding = nn.Embedding(input_dim, hidden_dim)
-        self.lstm = nn.LSTM(hidden_dim, hidden_dim, n_layers, batch_first=True)
+        self.lstm = nn.LSTM(input_dim, hidden_dim, n_layers, batch_first=True)
         self.fc = nn.Linear(hidden_dim, output_dim)
         
     def forward(self, x):
